@@ -26,7 +26,7 @@ class RatsliderCore{
 			callback(
 				currentElement,
 				currentElement.nextElementSibling,
-				currentElement.nextElementSibling.nextElementSibling
+				currentIndex==this.slidesLength-1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0] :currentElement.nextElementSibling.nextElementSibling
 			)
 		}
 
@@ -39,16 +39,16 @@ class RatsliderCore{
 		if (currentIndex == 1) {
 			document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1].className+=' current'
 			callback(
-				currentElement,
+				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1].previousElementSibling,
 				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1],
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1].nextElementSibling
+				currentElement
 			)
 		}else{
 			currentElement.previousElementSibling.className+=' current'
 			callback(
-				currentElement,
+				currentIndex==1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-2]:currentElement.previousElementSibling.previousElementSibling,
 				currentElement.previousElementSibling,
-				currentElement.previousElementSibling.nextElementSibling
+				currentElement
 			)
 		}
 
@@ -79,6 +79,9 @@ class Ratslider extends RatsliderCore{
 		this.containerElement=document.querySelector(props.id)
 		this.containerElement.className='ratslider '+this.containerElement.className
 
+		document.querySelectorAll(`${props.id} ${props.slides}`)[document.querySelectorAll(`${props.id} ${props.slides}`).length-1].className+=` ${props.slides.slice(1)}-prev`
+		document.querySelector(`${props.id} ${props.slides}.current`).nextElementSibling.className+=` ${props.slides.slice(1)}-next`
+
 		if (props.dots) {
 			this.dots()
 		}
@@ -101,10 +104,28 @@ class Ratslider extends RatsliderCore{
 		this.containerElement.appendChild(right)
 
 		document.querySelector(`${this.props.id} .prev.handler`).addEventListener('click',(e)=>{
-			super.prev();
+			super.prev((prev,current,next)=>{
+				var cleanPrev=new RegExp(`${this.props.slides.slice(1)}-prev`,'g')
+				var cleanNext=new RegExp(`${this.props.slides.slice(1)}-next`,'g')
+				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
+					item.className=item.className.replace(cleanPrev,'')
+					item.className=item.className.replace(cleanNext,'')
+				})
+				prev.className+=` ${this.props.slides.slice(1)}-prev`
+				next.className+=` ${this.props.slides.slice(1)}-next`
+			});
 		})
 		document.querySelector(`${this.props.id} .next.handler`).addEventListener('click',(e)=>{
-			super.next()
+			super.next((prev,current,next)=>{
+				var cleanPrev=new RegExp(`${this.props.slides.slice(1)}-prev`,'g')
+				var cleanNext=new RegExp(`${this.props.slides.slice(1)}-next`,'g')
+				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
+					item.className=item.className.replace(cleanPrev,'')
+					item.className=item.className.replace(cleanNext,'')
+				})
+				prev.className+=` ${this.props.slides.slice(1)}-prev`
+				next.className+=` ${this.props.slides.slice(1)}-next`
+			})
 		})
 	}
 	dots(){
