@@ -36,6 +36,7 @@ body{
 	line-height: 100%;
 }
 .ratslider .prev{
+	z-index: 100;
 	position: absolute;
 	top:40%;
 	left: 2em;
@@ -51,6 +52,7 @@ body{
 	left:0;
 	right:0;
 }
+
 .ratslider .dotHandler span{
 	display: inline-block;
 	margin: 10px;
@@ -63,10 +65,22 @@ body{
 	cursor:pointer;
 }
 
-.ratslider .slide{
-	display: none;
+ [ratslider].slide{
+	 position: absolute;
+	 opacity:0;
+	 transition: right 0.3s;
 }
 
-.ratslider .slide.current{
-	display: block;
+[ratslider].current{
+	 opacity:1;
+	 left: 0%;
+	 right: 0;
+}
+
+[ratslider].ratslider-prev{
+	 right: 200%;
+}
+[ratslider].ratslider-next{
+	 right:200%;
+	left: -200%;
 }

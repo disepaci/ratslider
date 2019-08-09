@@ -53,16 +53,17 @@ class RatsliderCore{
 		}
 
 	}
-	goTo(to,callback){
+	goTo(to,callbackBefore,callbackAfter){
+		callbackBefore == undefined ? callbackBefore(document.querySelector(`#${this.sliderId} .current`)):null;
 		if (to >= 0 && to < this.slidesLength ) {
 			var currentElement=document.querySelector(`#${this.sliderId} .current`)
 			currentElement.className=currentElement.className.replace(/current/g,'')
 			document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to].className+=' current'
-			callback(
-				currentElement,
+			callbackAfter? callbackAfter(
+				to==0?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`).length-1]:currentElement,
 				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to],
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to].nextElementSibling
-			)
+				top==document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`).length-1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0]:document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to].nextElementSibling
+			):null;
 		}
 
 	}
@@ -79,8 +80,8 @@ class Ratslider extends RatsliderCore{
 		this.containerElement=document.querySelector(props.id)
 		this.containerElement.className='ratslider '+this.containerElement.className
 
-		document.querySelectorAll(`${props.id} ${props.slides}`)[document.querySelectorAll(`${props.id} ${props.slides}`).length-1].className+=` ${props.slides.slice(1)}-prev`
-		document.querySelector(`${props.id} ${props.slides}.current`).nextElementSibling.className+=` ${props.slides.slice(1)}-next`
+		document.querySelectorAll(`${props.id} ${props.slides}`)[document.querySelectorAll(`${props.id} ${props.slides}`).length-1].className+=` ratslider-prev`
+		document.querySelector(`${props.id} ${props.slides}.current`).nextElementSibling.className+=` ratslider-next`
 
 		if (props.dots) {
 			this.dots()
@@ -105,26 +106,26 @@ class Ratslider extends RatsliderCore{
 
 		document.querySelector(`${this.props.id} .prev.handler`).addEventListener('click',(e)=>{
 			super.prev((prev,current,next)=>{
-				var cleanPrev=new RegExp(`${this.props.slides.slice(1)}-prev`,'g')
-				var cleanNext=new RegExp(`${this.props.slides.slice(1)}-next`,'g')
+				var cleanPrev=new RegExp(`ratslider-prev`,'g')
+				var cleanNext=new RegExp(`ratslider-next`,'g')
 				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
 					item.className=item.className.replace(cleanPrev,'')
 					item.className=item.className.replace(cleanNext,'')
 				})
-				prev.className+=` ${this.props.slides.slice(1)}-prev`
-				next.className+=` ${this.props.slides.slice(1)}-next`
+				prev.className+=` ratslider-prev`
+				next.className+=` ratslider-next`
 			});
 		})
 		document.querySelector(`${this.props.id} .next.handler`).addEventListener('click',(e)=>{
 			super.next((prev,current,next)=>{
-				var cleanPrev=new RegExp(`${this.props.slides.slice(1)}-prev`,'g')
-				var cleanNext=new RegExp(`${this.props.slides.slice(1)}-next`,'g')
+				var cleanPrev=new RegExp(`ratslider-prev`,'g')
+				var cleanNext=new RegExp(`ratslider-next`,'g')
 				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
 					item.className=item.className.replace(cleanPrev,'')
 					item.className=item.className.replace(cleanNext,'')
 				})
-				prev.className+=` ${this.props.slides.slice(1)}-prev`
-				next.className+=` ${this.props.slides.slice(1)}-next`
+				prev.className+=` ratslider-prev`
+				next.className+=` ratslider-next`
 			})
 		})
 	}
@@ -138,7 +139,20 @@ class Ratslider extends RatsliderCore{
 			dotContainer.appendChild(dot)
 
 			dot.addEventListener('click',(e)=>{
-				super.goTo(e.target.getAttribute('slide'))
+				super.goTo(e.target.getAttribute('slide'),
+					()=>{console.log('')},
+					(prev,current,next)=>{
+						var cleanPrev=new RegExp(`ratslider-prev`,'g')
+						var cleanNext=new RegExp(`ratslider-next`,'g')
+						document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
+							item.className=item.className.replace(cleanPrev,'')
+							item.className=item.className.replace(cleanNext,'')
+						})
+						prev.className+=` ratslider-prev`
+						next.className+=` ratslider-next`
+
+					}
+				)
 			})
 		}
 	}
