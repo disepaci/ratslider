@@ -1,0 +1,72 @@
+/* some styles */
+
+body{
+	max-width: 1200px;
+	margin:0 auto;
+	text-align: center;
+	height: 200px;
+}
+*{
+	box-sizing: border-box;
+}
+.slide{
+	background: gray;
+	color:white;
+	height: 200px;
+}
+.slide h1{
+	line-height: 190px;
+	margin:0;
+	border:solid black 5px;
+}
+
+/* RATSLIDER styles */
+
+.ratslider{
+	width:100%;
+	height:100%;
+	position:relative;
+	overflow: hidden;
+}
+.ratslider .next{
+	position: absolute;
+	top:40%;
+	right: 2em;
+	font-size: 2em;
+	line-height: 100%;
+}
+.ratslider .prev{
+	position: absolute;
+	top:40%;
+	left: 2em;
+	font-size: 2em;
+	line-height: 100%;
+}
+.ratslider .handler{
+	cursor: pointer;
+}
+.ratslider .dotHandler{
+	position: absolute;
+	bottom: 0;
+	left:0;
+	right:0;
+}
+.ratslider .dotHandler span{
+	display: inline-block;
+	margin: 10px;
+	width:15px;
+	height:15px;
+	border-radius:25px;
+	background: white;
+	border:white 2px solid;
+	opacity: 0.5;
+	cursor:pointer;
+}
+
+.ratslider .slide{
+	display: none;
+}
+
+.ratslider .slide.current{
+	display: block;
+}
