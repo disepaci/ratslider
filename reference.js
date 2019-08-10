@@ -1,4 +1,7 @@
 class Ratslider {
+	//https://www.w3schools.com/jsref/prop_style_transform.asp
+	//https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API
+	//https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API
 	constructor(container,slide,props) {
 		this.container=container
 		this.slides=slide

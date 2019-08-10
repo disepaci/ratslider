@@ -1,87 +1,177 @@
 class RatsliderCore{
-	constructor(props){
-		//props: id, slides (class)
+	constructor(props,set,reset,get,onChange){
+		//props: id, slides (class), onChange(optional)
 		this.props=props;
+
+		this.set=set
+		this.reset=reset;
+		this.get=get
+		this.onChange=onChange;
+
 		this.slidesLength=document.querySelectorAll(props.slides).length;
-		this.sliderId=`${props.id.slice(1)}`;
+		this.sliderId=`${props.id}`;
+		this.setCurrentSlide(0);
 
-		document.querySelector(props.slides).className+=' current';
 	}
-
-	next(callback){
-		var currentElement=document.querySelector(`#${this.sliderId} .current`)
-		var currentIndex=this.getNodeIndex(currentElement)
-
-		currentElement.className=currentElement.className.replace(/current/g,'')
-
-		if (currentIndex == this.slidesLength) {
-			document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0].className+=' current'
-			callback(
-				currentElement,
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0],
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0].nextElementSibling
-			)
+	setCurrentSlide(index){
+		var max=this.getSliderLength();
+		index=index==0?0:index==max?max-1:index-1;
+		console.log(index);
+		if(typeof this.set == 'function'){
+			this.set(this.getSlides()[index],index)
 		}else{
-			currentElement.nextElementSibling.className+=' current';
-			callback(
-				currentElement,
-				currentElement.nextElementSibling,
-				currentIndex==this.slidesLength-1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0] :currentElement.nextElementSibling.nextElementSibling
-			)
+			this.getSlides()[index].className+=` current`;
 		}
-
 	}
-	prev(callback){
-		var currentElement=document.querySelector(`#${this.sliderId} .current`)
-		var currentIndex=this.getNodeIndex(currentElement)
-
-		currentElement.className=currentElement.className.replace(/current/g,'')
-		if (currentIndex == 1) {
-			document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1].className+=' current'
-			callback(
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1].previousElementSibling,
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-1],
-				currentElement
-			)
+	resetCurrentSlide(){
+		if(typeof this.reset == 'function'){
+			this.reset(this.getCurrentSlide(),this.getNodeIndex(this.getCurrentSlide()))
 		}else{
-			currentElement.previousElementSibling.className+=' current'
-			callback(
-				currentIndex==1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[this.slidesLength-2]:currentElement.previousElementSibling.previousElementSibling,
-				currentElement.previousElementSibling,
-				currentElement
-			)
+			let regex=new RegExp('current','g')
+			let current=this.getCurrentSlide()
+			current.className=current.className.replace(regex,'')
 		}
-
 	}
-	goTo(to,callbackBefore,callbackAfter){
-		callbackBefore == undefined ? callbackBefore(document.querySelector(`#${this.sliderId} .current`)):null;
-		if (to >= 0 && to < this.slidesLength ) {
-			var currentElement=document.querySelector(`#${this.sliderId} .current`)
-			currentElement.className=currentElement.className.replace(/current/g,'')
-			document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to].className+=' current'
-			callbackAfter? callbackAfter(
-				to==0?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`).length-1]:currentElement,
-				document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to],
-				top==document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`).length-1?document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[0]:document.querySelectorAll(`#${this.sliderId} ${this.props.slides}`)[to].nextElementSibling
-			):null;
+	getCurrentSlide(){
+		if(typeof this.get == 'function'){
+			return this.get()
+		}else{
+			return document.querySelector(`${this.sliderId} .current`);
 		}
-
+	}
+	getCurrentSlideIndex(){
+		return this.getNodeIndex(this.getCurrentSlide());
+	}
+	getSlides(){
+		return document.querySelectorAll(`${this.sliderId} ${this.props.slides}`);
+	}
+	getSliderLength(){
+		return this.getSlides().length
 	}
 	getNodeIndex(element){
 		return([].indexOf.call(element.parentElement.children, element))
 	}
+	getMetadata(){
+		return{
+			container:document.querySelector(this.sliderId),
+		}
+	}
+	next(callback){
+		var currentElement=this.getCurrentSlide()
+		var currentIndex=this.getCurrentSlideIndex()
+		var slides=this.getSlides()
+		var slidesLength=this.getSliderLength();
 
+		this.resetCurrentSlide();
+		if (currentIndex == slidesLength) {
+			this.setCurrentSlide(0);
+			typeof callback=='function'?callback(
+				currentElement,
+				slides[0],
+				slides[0].nextElementSibling
+			):null;
+		}else{
+			this.setCurrentSlide(currentIndex+1)
+			typeof callback=='function'?callback(
+				currentElement,
+				currentElement.nextElementSibling,
+				currentIndex==slidesLength-1?slides[0] :currentElement.nextElementSibling.nextElementSibling
+			):null;
+		}
+		typeof this.onChange=='function'?this.onChange(currentElement,currentIndex,slides):null;
+	}
+	prev(callback){
+		var slides=this.getSlides()
+		var slidesLength=this.getSliderLength();
+		var currentElement=this.getCurrentSlide()
+		var currentIndex=this.getCurrentSlideIndex();
+
+		this.resetCurrentSlide();
+		console.log('current-'+currentIndex);
+		if (currentIndex == 1	) {
+			this.setCurrentSlide(slidesLength)
+			callback(
+				slides[slidesLength-1].previousElementSibling,//prev
+				slides[slidesLength],//current
+				currentElement//next
+			)
+		}else{
+			this.setCurrentSlide(currentIndex-1)
+			callback(
+				currentIndex==2?slides[slidesLength-2]:currentElement.previousElementSibling.previousElementSibling,
+				currentElement.previousElementSibling,
+				currentElement
+			)
+		}
+		typeof this.onChange=='function'?this.onChange(currentElement,currentIndex,slides):null;
+	}
+	goTo(to,callback){
+		var slides=this.getSlides();
+		var slidesLength=this.getSliderLength();
+		var currentElement=this.getCurrentSlide()
+		var currentIndex=this.getCurrentSlideIndex()
+
+		typeof callback.before == 'function' ? callback.before(currentElement,currentIndex,slides):null;
+
+		if (to >= 0 && to < slidesLength && to!= data.index-1 ) {
+			this.resetCurrentSlide()
+			this.setCurrentSlide(to)
+			callback.after? callback.after(
+				to==0?slides[slidesLength.length-1]:currentElement,
+				slides[to],
+				top==slidesLength-1?slides[0]:slides[to].nextElementSibling
+			):null;
+			typeof this.onChange=='function'?this.onChange(slides,currentIndex):null;
+		}
+	}
 }
 
 class Ratslider extends RatsliderCore{
 	constructor(props){
-		super({id:props.id, slides:props.slides});
-		this.props=props;
-		this.containerElement=document.querySelector(props.id)
-		this.containerElement.className='ratslider '+this.containerElement.className
+		super({
+				id:props.id,
+				slides:props.slides,
+			},
+			setCurrentSlide,
+			resetCurrentSlide,
+			getCurrentSlide
+		);
 
-		document.querySelectorAll(`${props.id} ${props.slides}`)[document.querySelectorAll(`${props.id} ${props.slides}`).length-1].className+=` ratslider-prev`
-		document.querySelector(`${props.id} ${props.slides}.current`).nextElementSibling.className+=` ratslider-next`
+
+		function setCurrentSlide(element,index){
+			element.setAttribute('ratslider','current-slide')
+		}
+		function resetCurrentSlide(element,index){
+			element.setAttribute('ratslider','slide')
+		}
+
+		function getCurrentSlide(){
+			return document.querySelector(`${props.id} [ratslider=current-slide]`)
+		}
+
+
+		// set global variables
+		this.props=props;
+		this.metadata=super.getMetadata()
+		this.containerElement=this.metadata.container
+		this.containerSelector='#'+this.containerElement.getAttribute('id')
+		this.prefix='ratslider'
+		this.defaultAttr='slide';
+		this.currentSlideAttr='current-slide'
+		this.containerAttr='container'
+		this.nextSlideAttr='next-slide'
+		this.prevSlideAttr='prev-slide'
+		// tagg all the slider
+		this.setAttribute(this.containerElement,this.containerAttr)
+		super.getSlides().forEach((slide)=>{
+			if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
+				this.setAttribute(slide,this.defaultAttr)
+
+			}
+		})
+
+		this.setAttribute(super.getSlides()[super.getSliderLength()-1],this.prevSlideAttr)
+		this.setAttribute(super.getCurrentSlide().nextElementSibling,this.nextSlideAttr)
 
 		if (props.dots) {
 			this.dots()
@@ -89,43 +179,54 @@ class Ratslider extends RatsliderCore{
 		if (props.handlers) {
 			this.handlers()
 		}
-
 	}
+	setAttribute(selector,value){
+		if (typeof selector=='object') {
+			selector.setAttribute(this.prefix,value)
+		}else{
+			var containerSelector=this.containerSelector+' ';
+			document.querySelector(containerSelector + selector).setAttribute(this.prefix,value)
+		}
+	}
+	cleanAttributes(){
+		this.getSlides().forEach((slide)=>{
+			var attr=slide.getAttribute(this.prefix)
+			if (attr==this.nextSlideAttr ) {
+				this.setAttribute(`	[${this.prefix}=${this.nextSlideAttr}]`,this.defaultAttr)
+			}
+			if(attr == this.prevSlideAttr){
+				this.setAttribute(`[${this.prefix}=${this.prevSlideAttr}]`,this.defaultAttr)
+			}
+
+		})
+	}
+
 	handlers(){
 		var right=document.createElement("span")
-		right.innerHTML=">"
+		right.innerHTML="&#10097;"
 		right.className='next handler'
 
 		var left=document.createElement("span")
-		left.innerHTML="<"
+		left.innerHTML="&#10096;"
 		left.setAttribute('id', `prev`);
 		left.className='prev handler'
 
 		this.containerElement.insertBefore(left,this.containerElement.firstElementChild)
 		this.containerElement.appendChild(right)
 
-		document.querySelector(`${this.props.id} .prev.handler`).addEventListener('click',(e)=>{
+		document.querySelector(`${this.containerSelector} span.prev.handler`).addEventListener('click',(e)=>{
 			super.prev((prev,current,next)=>{
-				var cleanPrev=new RegExp(`ratslider-prev`,'g')
-				var cleanNext=new RegExp(`ratslider-next`,'g')
-				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
-					item.className=item.className.replace(cleanPrev,'')
-					item.className=item.className.replace(cleanNext,'')
-				})
-				prev.className+=` ratslider-prev`
-				next.className+=` ratslider-next`
+				console.log('prev');
+				this.cleanAttributes()
+				this.setAttribute(prev,this.prevSlideAttr)
+				this.setAttribute(next,this.nextSlideAttr)
 			});
 		})
 		document.querySelector(`${this.props.id} .next.handler`).addEventListener('click',(e)=>{
 			super.next((prev,current,next)=>{
-				var cleanPrev=new RegExp(`ratslider-prev`,'g')
-				var cleanNext=new RegExp(`ratslider-next`,'g')
-				document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
-					item.className=item.className.replace(cleanPrev,'')
-					item.className=item.className.replace(cleanNext,'')
-				})
-				prev.className+=` ratslider-prev`
-				next.className+=` ratslider-next`
+				this.cleanAttributes()
+				this.setAttribute(prev,this.prevSlideAttr)
+				this.setAttribute(next,this.nextSlideAttr)
 			})
 		})
 	}
