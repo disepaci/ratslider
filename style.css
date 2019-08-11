@@ -65,29 +65,71 @@ body{
 	cursor:pointer;
 }
 
- [ratslider=slide]{
+ [ratslider$=slide]{
 	 position: absolute;
 	 top:0;
 	 bottom: 0;
 	 left:0;
 	 right: 0;
-	 opacity: 0;
+	 display: none;
 }
-@keyframes foward{
-	from {transform:translateX(-100%);}
-	to {transform:translateX(0%);}
+@keyframes out-foward{
+	from {
+		transform:translateX(0%);
+	}
+	to {
+		transform:translateX(100%);
+	}
 }
-@-webkit-eyframes foward{
-	from {transform:translateX(-100%);}
-	to {transform:translateX(0);}
+@keyframes in-foward{
+	from {
+		transform:translateX(-100%);
+	}
+	to {
+		transform:translateX(0%);
+	}
 }
-
-[ratslider=current-slide]{
+@keyframes out-reverse{
+	from {
+		transform:translateX(0%);
+	}
+	to {
+		transform:translateX(-100%);
+	}
+}
+@keyframes in-reverse{
+	from {
+		transform:translateX(100%);
+	}
+	to {
+		transform:translateX(0%);
+	}
+}
+/* go prev */
+[ratslider*=current-slide]{
 	 display: block;
 }
-[ratslider=next-slide]{
-	 display: none;
+[ratslider=foward-slide]{
+	display: block;
+	 animation-name: out-foward;
+	 animation-duration: 1s;
+	 animation-fill-mode: forwards;
 }
-[ratslider=prev-slide]{
-	 display: none;
+[ratslider=current-slide-foward-slide]{
+	 animation-name: in-foward;
+	 animation-duration: 1s;
+	 animation-fill-mode: forwards;
+}
+/* next */
+[ratslider=reverse-slide]{
+	display: block;
+	 animation-name: out-reverse;
+	 animation-duration: 1s;
+	 animation-fill-mode: forwards;
+
+}
+[ratslider=current-slide-reverse-slide]{
+	 animation-name: in-reverse;
+	 animation-duration: 1s;
+	 animation-fill-mode: forwards;
 }

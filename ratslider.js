@@ -87,18 +87,17 @@ class RatsliderCore{
 		var currentIndex=this.getCurrentSlideIndex();
 
 		this.resetCurrentSlide();
-		console.log('current-'+currentIndex);
 		if (currentIndex == 1	) {
 			this.setCurrentSlide(slidesLength)
 			callback(
-				slides[slidesLength-1].previousElementSibling,//prev
-				slides[slidesLength],//current
+				slides[0],//prev
+				slides[slidesLength-1],//current
 				currentElement//next
 			)
 		}else{
 			this.setCurrentSlide(currentIndex-1)
 			callback(
-				currentIndex==2?slides[slidesLength-2]:currentElement.previousElementSibling.previousElementSibling,
+				currentIndex==2?slides[slidesLength-1]:currentElement.previousElementSibling.previousElementSibling,
 				currentElement.previousElementSibling,
 				currentElement
 			)
@@ -146,7 +145,7 @@ class Ratslider extends RatsliderCore{
 		}
 
 		function getCurrentSlide(){
-			return document.querySelector(`${props.id} [ratslider=current-slide]`)
+			return document.querySelector(`${props.id} [ratslider*=current-slide]`)
 		}
 
 
@@ -159,8 +158,8 @@ class Ratslider extends RatsliderCore{
 		this.defaultAttr='slide';
 		this.currentSlideAttr='current-slide'
 		this.containerAttr='container'
-		this.nextSlideAttr='next-slide'
-		this.prevSlideAttr='prev-slide'
+		this.nextSlideAttr='reverse-slide'
+		this.prevSlideAttr='foward-slide'
 		// tagg all the slider
 		this.setAttribute(this.containerElement,this.containerAttr)
 		super.getSlides().forEach((slide)=>{
@@ -170,8 +169,6 @@ class Ratslider extends RatsliderCore{
 			}
 		})
 
-		this.setAttribute(super.getSlides()[super.getSliderLength()-1],this.prevSlideAttr)
-		this.setAttribute(super.getCurrentSlide().nextElementSibling,this.nextSlideAttr)
 
 		if (props.dots) {
 			this.dots()
@@ -192,15 +189,13 @@ class Ratslider extends RatsliderCore{
 		this.getSlides().forEach((slide)=>{
 			var attr=slide.getAttribute(this.prefix)
 			if (attr==this.nextSlideAttr ) {
-				this.setAttribute(`	[${this.prefix}=${this.nextSlideAttr}]`,this.defaultAttr)
+				this.setAttribute(slide,this.defaultAttr)
 			}
 			if(attr == this.prevSlideAttr){
-				this.setAttribute(`[${this.prefix}=${this.prevSlideAttr}]`,this.defaultAttr)
+				this.setAttribute(slide,this.defaultAttr)
 			}
-
 		})
 	}
-
 	handlers(){
 		var right=document.createElement("span")
 		right.innerHTML="&#10097;"
@@ -216,17 +211,16 @@ class Ratslider extends RatsliderCore{
 
 		document.querySelector(`${this.containerSelector} span.prev.handler`).addEventListener('click',(e)=>{
 			super.prev((prev,current,next)=>{
-				console.log('prev');
 				this.cleanAttributes()
-				this.setAttribute(prev,this.prevSlideAttr)
-				this.setAttribute(next,this.nextSlideAttr)
+				this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
+				this.setAttribute(next,this.prevSlideAttr)
 			});
 		})
 		document.querySelector(`${this.props.id} .next.handler`).addEventListener('click',(e)=>{
 			super.next((prev,current,next)=>{
 				this.cleanAttributes()
-				this.setAttribute(prev,this.prevSlideAttr)
-				this.setAttribute(next,this.nextSlideAttr)
+				this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
+				this.setAttribute(prev,this.nextSlideAttr)
 			})
 		})
 	}
