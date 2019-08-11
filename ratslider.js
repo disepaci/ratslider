@@ -81,7 +81,11 @@ class RatsliderCore{
 				currentIndex==slidesLength-1?slides[0] : slides[(currentIndex+1)]
 			):null;
 		}
-		typeof this.onChange=='function'?this.onChange(slides[currentIndex],currentIndex,slides):null;
+		typeof this.onChange=='function'?this.onChange(
+			slides[currentIndex],
+			currentIndex==slidesLength?0:currentIndex,
+			slides
+		):null;
 	}
 	prev(callback){
 		var slides=this.getSlides()
@@ -100,12 +104,16 @@ class RatsliderCore{
 		}else{
 			this.setCurrentSlide(currentIndex-1)
 			callback(
-				currentIndex==2?slides[slidesLength-1]:currentElement.previousElementSibling.previousElementSibling,
-				currentElement.previousElementSibling,
+				currentIndex==1?slides[slidesLength-1] : slides[currentIndex-2],
+				slides[currentIndex-2],
 				currentElement
 			)
 		}
-		typeof this.onChange=='function'?this.onChange(slides[currentIndex],currentIndex,slides):null;
+		typeof this.onChange=='function'?this.onChange(
+			slides[currentIndex],
+			currentIndex==1?slidesLength-1:currentIndex-2,
+			slides
+		):null;
 	}
 	goTo(to,callback){
 		var slides=this.getSlides();
