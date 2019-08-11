@@ -2,6 +2,8 @@
 
 Ratslider is a stand alone responsive slider maker library wrote in vainilla javascript and its extends [RatsliderCore](#ratslidercore) Class.
 
+### [DEMO](https://rantasma.github.io/ratslider/example/)
+
 ## Usage
 ### Ratslider( { id: string , slides: string, dots: bool, handlers:bool, draggable: bool }, callback)
 
