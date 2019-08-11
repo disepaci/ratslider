@@ -309,7 +309,7 @@ class Ratslider extends RatsliderCore{
 				super.goTo(index,
 					(prev,current,next)=>{
 						this.cleanAttributes();
-						if (index+1>this.getNodeIndex(current)) {
+						if (Number(index)+1>this.getNodeIndex(prev)) {
 							this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
 							this.setAttribute(prev,this.nextSlideAttr)
 						}else{
