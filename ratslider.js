@@ -220,16 +220,26 @@ class Ratslider extends RatsliderCore{
 	}
 	drag(){
 		var pos={}
-		this.containerElement.addEventListener('mousedown',(e)=>{
-			pos.init=e.clientX
-		})
-		this.containerElement.addEventListener('mouseup',(e)=>{
-			pos.end=e.clientX
-			if (pos.init<pos.end) {
-				this.prev()
-			}else{
-				this.next()
-			}
+		var isDragged=false;
+		this.getSlides().forEach((slide)=>{
+			slide.addEventListener('mousedown',(e)=>{
+				pos.init=e.clientX
+				setTimeout(()=>{
+					isDragged=true
+				},500)
+
+			})
+			slide.addEventListener('mouseup',(e)=>{
+				if (isDragged) {
+					pos.end=e.clientX
+					if (pos.init<pos.end) {
+						this.prev()
+					}else{
+						this.next()
+					}
+				}
+			})
+
 		})
 	}
 	next(callback){
@@ -303,7 +313,8 @@ const s=new Ratslider({
 		dots:true,
 		handlers:true
 	},
-	(a)=>{
+	(element)=>{
+		console.log('do something');
 	}
 
 );
