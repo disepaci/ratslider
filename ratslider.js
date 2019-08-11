@@ -178,16 +178,13 @@ class Ratslider extends RatsliderCore{
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
 
-		this.dragValidator=null;
-		this.dragMobileValidator=null;
-
 		// tagg all the slider
 		this.setAttribute(this.containerElement,this.containerAttr)
 		super.getSlides().forEach((slide)=>{
 			if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
 				this.setAttribute(slide,this.defaultAttr)
 			}
-			slide.addEventListener("animationend",(a)=>{//webkitAnimationEnd
+			slide.addEventListener("animationend",(a)=>{
 				a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
 			}, false);
 		})
@@ -200,8 +197,13 @@ class Ratslider extends RatsliderCore{
 		if (props.handlers) {
 			this.handlers()
 		}
-		if (draggable) {
-			this.drag()
+		if (props.draggable) {
+			if (typeof draggable == 'object') {
+				var op=prps.draggable
+				drag(op.timeDragging,op.mobileDistance,op.desktopDistance)
+			}else{
+				this.drag()
+			}
 		}
 	}
 	setAttribute(selector,value){
@@ -223,41 +225,36 @@ class Ratslider extends RatsliderCore{
 			}
 		})
 	}
-	drag(){
+	drag(timeDragging=200,mobileDistance=200,desktopDistance=100){
 		var pos={}
-		this.dragValidator=null;
-		this.dragMobileValidator=null;
+
 		this.getSlides().forEach((slide)=>{
 			slide.addEventListener('mousedown',(e)=>{
 				pos.init=e.clientX
-				this.dragValidator=new Date().getTime();
 			})
 			slide.addEventListener('mouseup',(e)=>{
-				if (new Date().getTime() > this.dragValidator+200) {
 					pos.end=e.clientX
-					if (pos.init<pos.end) {
+					if (pos.init<pos.end-desktopDistance) {
 						this.prev()
-					}else{
+					}else if(pos.init>pos.end+desktopDistance){
 						this.next()
 					}
-				}
 			})
+
 			slide.addEventListener('touchstart',(e)=>{
 				pos.init=e.touches[0].clientX
-				this.dragValidator=new Date().getTime();
 			})
 			slide.addEventListener('touchmove',(e)=>{
-				this.dragMobileValidator=true
 				pos.end=e.touches[0].clientX
 			})
 			slide.addEventListener('touchend',(e)=>{
-				if (new Date().getTime() > this.dragValidator+200 && this.dragMobileValidator) {
-					if (pos.init<pos.end) {
+					if (pos.init<pos.end-mobileDistance) {
 						this.prev()
-					}else{
+					}else if(pos.init>pos.end+mobileDistance){
 						this.next()
 					}
-				}
+				pos.init=0;
+				pos.end=0;
 				this.dragValidator=false
 			})
 		})
@@ -331,12 +328,11 @@ const s=new Ratslider({
 		id:'#ratslider',
 		slides:'.slide',
 		dots:true,
-		handlers:true
+		handlers:true,
+		draggable:true
 	},
 	(element)=>{
 		console.log('do something');
 	}
 
 );
-
-// s.next(0)
