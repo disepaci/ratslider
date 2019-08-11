@@ -1,5 +1,5 @@
 class RatsliderCore{
-	constructor(props,set,reset,get,onChange){
+	constructor(props,onChange,set,reset,get){
 		//props: id, slides (class), onChange(optional)
 		this.props=props;
 
@@ -57,6 +57,8 @@ class RatsliderCore{
 	getMetadata(){
 		return{
 			container:document.querySelector(this.sliderId),
+			id:this.sliderId,
+			slidesClass:this.props.slides
 		}
 	}
 	next(callback){
@@ -140,10 +142,10 @@ class Ratslider extends RatsliderCore{
 				id:props.id,
 				slides:props.slides,
 			},
+			onChange,
 			setCurrentSlide,
 			resetCurrentSlide,
-			getCurrentSlide,
-			onChange
+			getCurrentSlide
 		);
 
 
@@ -275,6 +277,21 @@ class Ratslider extends RatsliderCore{
 			typeof callback=='function'?callback(prev,current,next):null;
 		});
 	}
+	goTo(index,callback){
+		super.goTo(index,
+			(prev,current,next)=>{
+				this.cleanAttributes();
+				if (Number(index)+1>this.getNodeIndex(prev)) {
+					this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
+					this.setAttribute(prev,this.nextSlideAttr)
+				}else{
+					this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
+					this.setAttribute(prev,this.prevSlideAttr)
+				}
+				typeof callback=='function'?callback(prev,current,next):null;
+			}
+		)
+	}
 	handlers(){
 		var right=document.createElement("span")
 		right.innerHTML="&#10097;"
@@ -306,19 +323,7 @@ class Ratslider extends RatsliderCore{
 
 			dot.addEventListener('click',(e)=>{
 				var index=e.target.getAttribute('slide')
-				super.goTo(index,
-					(prev,current,next)=>{
-						this.cleanAttributes();
-						if (Number(index)+1>this.getNodeIndex(prev)) {
-							this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
-							this.setAttribute(prev,this.nextSlideAttr)
-						}else{
-							this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
-							this.setAttribute(prev,this.prevSlideAttr)
-						}
-
-					}
-				)
+				this.goTo(index)
 			})
 		}
 	}
