@@ -1,0 +1,21 @@
+/* some styles */
+
+body{
+	max-width: 1200px;
+	margin:0 auto;
+	text-align: center;
+	height: 200px;
+}
+*{
+	box-sizing: border-box;
+}
+.slide{
+	background: gray;
+	color:white;
+	height: 200px;
+}
+.slide h1{
+	line-height: 190px;
+	margin:0;
+	border:solid black 5px;
+}

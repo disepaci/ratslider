@@ -1,0 +1,42 @@
+<!DOCTYPE html5>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="./style.css">
+		<link rel="stylesheet" href="/ratslider.css">
+	</head>
+	<body>
+		<div id="ratslider" class="ratslider">
+			<div class="slide" >
+				<h1>1</h1>
+			</div>
+			<div class="slide">
+				<h1>2</h1>
+			</div>
+			<div class="slide" >
+				<h1>3</h1>
+			</div>
+			<div class="slide"  >
+				<h1>4</h1>
+			</div>
+		</div>
+		<script src="/ratslider.js" charset="utf-8"></script>
+		<script type="text/javascript">
+
+			const s=new Ratslider({
+					id:'#ratslider',
+					slides:'.slide',
+					dots:true,
+					handlers:true,
+					draggable:true
+				},
+				(element)=>{
+					console.log('do something');
+				}
+
+			);
+
+		</script>
+	</body>
+</html>

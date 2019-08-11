@@ -328,16 +328,3 @@ class Ratslider extends RatsliderCore{
 		}
 	}
 }
-
-const s=new Ratslider({
-		id:'#ratslider',
-		slides:'.slide',
-		dots:true,
-		handlers:true,
-		draggable:true
-	},
-	(element)=>{
-		console.log('do something');
-	}
-
-);
