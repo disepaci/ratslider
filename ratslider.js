@@ -178,6 +178,8 @@ class Ratslider extends RatsliderCore{
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
 
+		this.dragValidator=false;
+
 		// tagg all the slider
 		this.setAttribute(this.containerElement,this.containerAttr)
 		super.getSlides().forEach((slide)=>{
@@ -220,17 +222,17 @@ class Ratslider extends RatsliderCore{
 	}
 	drag(){
 		var pos={}
-		var isDragged=false;
+		// var startDrag=0;
+		this.dragValidator=false;
 		this.getSlides().forEach((slide)=>{
 			slide.addEventListener('mousedown',(e)=>{
 				pos.init=e.clientX
-				setTimeout(()=>{
-					isDragged=true
-				},500)
-
+				// starDrag=new Date().getSeconds();
+				this.dragValidator=new Date().getTime();
 			})
 			slide.addEventListener('mouseup',(e)=>{
-				if (isDragged) {
+
+				if (new Date().getTime() > this.dragValidator+200) {
 					pos.end=e.clientX
 					if (pos.init<pos.end) {
 						this.prev()
