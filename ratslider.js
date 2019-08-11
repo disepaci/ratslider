@@ -200,7 +200,9 @@ class Ratslider extends RatsliderCore{
 		if (props.handlers) {
 			this.handlers()
 		}
-		this.drag()
+		if (draggable) {
+			this.drag()
+		}
 	}
 	setAttribute(selector,value){
 		if (typeof selector=='object') {
