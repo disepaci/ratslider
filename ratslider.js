@@ -16,7 +16,6 @@ class RatsliderCore{
 	setCurrentSlide(index){
 		var max=this.getSliderLength();
 		index=index==0?0:index==max?max-1:index-1;
-		console.log(index);
 		if(typeof this.set == 'function'){
 			this.set(this.getSlides()[index],index)
 		}else{
@@ -128,7 +127,7 @@ class RatsliderCore{
 }
 
 class Ratslider extends RatsliderCore{
-	constructor(props){
+	constructor(props,animationEnd){
 		super({
 				id:props.id,
 				slides:props.slides,
@@ -169,6 +168,10 @@ class Ratslider extends RatsliderCore{
 				this.setAttribute(slide,this.defaultAttr)
 
 			}
+			slide.addEventListener("animationend",(a)=>{
+				a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
+			}, false);
+
 		})
 
 
@@ -198,6 +201,22 @@ class Ratslider extends RatsliderCore{
 			}
 		})
 	}
+	next(callback){
+		super.next((prev,current,next)=>{
+			this.cleanAttributes()
+			this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
+			this.setAttribute(prev,this.nextSlideAttr)
+			typeof callback=='function'?callback(prev,current,next):null;
+		})
+	}
+	prev(callback){
+		super.prev((prev,current,next)=>{
+			this.cleanAttributes()
+			this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
+			this.setAttribute(next,this.prevSlideAttr)
+			typeof callback=='function'?callback(prev,current,next):null;
+		});
+	}
 	handlers(){
 		var right=document.createElement("span")
 		right.innerHTML="&#10097;"
@@ -212,18 +231,10 @@ class Ratslider extends RatsliderCore{
 		this.containerElement.appendChild(right)
 
 		document.querySelector(`${this.containerSelector} span.prev.handler`).addEventListener('click',(e)=>{
-			super.prev((prev,current,next)=>{
-				this.cleanAttributes()
-				this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
-				this.setAttribute(next,this.prevSlideAttr)
-			});
+			this.prev();
 		})
 		document.querySelector(`${this.props.id} .next.handler`).addEventListener('click',(e)=>{
-			super.next((prev,current,next)=>{
-				this.cleanAttributes()
-				this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
-				this.setAttribute(prev,this.nextSlideAttr)
-			})
+			this.next();
 		})
 	}
 	dots(){
@@ -256,10 +267,15 @@ class Ratslider extends RatsliderCore{
 }
 
 const s=new Ratslider({
-	id:'#ratslider',
-	slides:'.slide',
-	dots:true,
-	handlers:true
-});
+		id:'#ratslider',
+		slides:'.slide',
+		dots:true,
+		handlers:true
+	},
+	(a)=>{
+		console.log(a);
+	}
+
+);
 
 // s.next(0)
