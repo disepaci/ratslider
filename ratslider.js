@@ -1,6 +1,10 @@
+
+/* Ratslider v1.0.0
+ * By Rantasma
+ * Github: https://github.com/rantasma/ratslider
+ */
 class RatsliderCore{
 	constructor(props,onChange,set,reset,get){
-		//props: id, slides (class), onChange(optional)
 		this.props=props;
 
 		this.set=set
