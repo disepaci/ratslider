@@ -81,7 +81,7 @@ class RatsliderCore{
 				currentIndex==slidesLength-1?slides[0] : slides[(currentIndex+1)]
 			):null;
 		}
-		typeof this.onChange=='function'?this.onChange(currentElement,currentIndex,slides):null;
+		typeof this.onChange=='function'?this.onChange(slides[currentIndex],currentIndex,slides):null;
 	}
 	prev(callback){
 		var slides=this.getSlides()
@@ -105,7 +105,7 @@ class RatsliderCore{
 				currentElement
 			)
 		}
-		typeof this.onChange=='function'?this.onChange(currentElement,currentIndex,slides):null;
+		typeof this.onChange=='function'?this.onChange(slides[currentIndex],currentIndex,slides):null;
 	}
 	goTo(to,callback){
 		var slides=this.getSlides();
@@ -121,7 +121,7 @@ class RatsliderCore{
 				slides[to],
 				slides[to>slidesLength?to:0]
 			):null;
-			typeof this.onChange=='function'?this.onChange(slides,currentIndex):null;
+			typeof this.onChange=='function'?this.onChange(slides[to],to,slides):null;
 		}
 	}
 }
@@ -134,7 +134,8 @@ class Ratslider extends RatsliderCore{
 			},
 			setCurrentSlide,
 			resetCurrentSlide,
-			getCurrentSlide
+			getCurrentSlide,
+			onChange
 		);
 
 
@@ -149,6 +150,13 @@ class Ratslider extends RatsliderCore{
 			return document.querySelector(`${props.id} [ratslider*=current-slide]`)
 		}
 
+		function onChange(element,index,slides){
+			var dots=document.querySelectorAll(`${props.id}[ratslider=container] .dotHandler span`)
+			for (var i = 0; i < dots.length; i++) {
+				dots[i].className=''
+			}
+			dots[index].className=`ratslider-dot-active`
+		}
 
 		// set global variables
 		this.props=props;
@@ -177,6 +185,7 @@ class Ratslider extends RatsliderCore{
 
 		if (props.dots) {
 			this.dots()
+			document.querySelector(`${props.id}[ratslider=container] .dotHandler span`).className='ratslider-dot-active'
 		}
 		if (props.handlers) {
 			this.handlers()

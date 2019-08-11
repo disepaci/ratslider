@@ -72,7 +72,11 @@ body{
 	cursor:pointer;
 }
 
- [ratslider$=slide]{
+[ratslider=container] .dotHandler .ratslider-dot-active{
+		background: black;
+}
+
+[ratslider$=slide]{
 	 position: absolute;
 	 top:0;
 	 bottom: 0;
