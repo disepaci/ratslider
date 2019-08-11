@@ -15,7 +15,7 @@ Ratslider is a stand alone responsive slider maker library wrote in vainilla jav
 		<link rel="stylesheet" href="ratslider.css">
 	</head>
 	<body>
-		<div id="ratslider" class="ratslider">
+		<div id="my-slider">
 			<div class="slide" >
 				<h1>1</h1>
 			</div>
