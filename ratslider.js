@@ -49,7 +49,9 @@ class RatsliderCore{
 		return this.getSlides().length
 	}
 	getNodeIndex(element){
-		return([].indexOf.call(element.parentElement.children, element))
+		var arr=Array.from(this.getSlides())
+		return arr.indexOf(element)+1
+
 	}
 	getMetadata(){
 		return{
@@ -68,14 +70,14 @@ class RatsliderCore{
 			typeof callback=='function'?callback(
 				currentElement,
 				slides[0],
-				slides[0].nextElementSibling
+				slides[1]
 			):null;
 		}else{
 			this.setCurrentSlide(currentIndex+1)
 			typeof callback=='function'?callback(
 				currentElement,
-				currentElement.nextElementSibling,
-				currentIndex==slidesLength-1?slides[0] :currentElement.nextElementSibling.nextElementSibling
+				slides[currentIndex],
+				currentIndex==slidesLength-1?slides[0] : slides[(currentIndex+1)]
 			):null;
 		}
 		typeof this.onChange=='function'?this.onChange(currentElement,currentIndex,slides):null;
