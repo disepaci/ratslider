@@ -166,7 +166,7 @@ class Ratslider extends RatsliderCore{
 			dots[index].className=`ratslider-dot-active`
 		}
 
-		// set global variables
+		// set global constants
 		this.props=props;
 		this.metadata=super.getMetadata()
 		this.containerElement=this.metadata.container
@@ -177,17 +177,16 @@ class Ratslider extends RatsliderCore{
 		this.containerAttr='container'
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
+
 		// tagg all the slider
 		this.setAttribute(this.containerElement,this.containerAttr)
 		super.getSlides().forEach((slide)=>{
 			if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
 				this.setAttribute(slide,this.defaultAttr)
-
 			}
-			slide.addEventListener("animationend",(a)=>{
+			slide.addEventListener("animationend",(a)=>{//webkitAnimationEnd
 				a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
 			}, false);
-
 		})
 
 
@@ -198,6 +197,7 @@ class Ratslider extends RatsliderCore{
 		if (props.handlers) {
 			this.handlers()
 		}
+		this.drag()
 	}
 	setAttribute(selector,value){
 		if (typeof selector=='object') {
@@ -215,6 +215,20 @@ class Ratslider extends RatsliderCore{
 			}
 			if(attr == this.prevSlideAttr){
 				this.setAttribute(slide,this.defaultAttr)
+			}
+		})
+	}
+	drag(){
+		var pos={}
+		this.containerElement.addEventListener('mousedown',(e)=>{
+			pos.init=e.clientX
+		})
+		this.containerElement.addEventListener('mouseup',(e)=>{
+			pos.end=e.clientX
+			if (pos.init<pos.end) {
+				this.prev()
+			}else{
+				this.next()
 			}
 		})
 	}
