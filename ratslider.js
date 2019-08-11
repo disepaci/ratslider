@@ -178,7 +178,8 @@ class Ratslider extends RatsliderCore{
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
 
-		this.dragValidator=false;
+		this.dragValidator=null;
+		this.dragMobileValidator=null;
 
 		// tagg all the slider
 		this.setAttribute(this.containerElement,this.containerAttr)
@@ -222,16 +223,14 @@ class Ratslider extends RatsliderCore{
 	}
 	drag(){
 		var pos={}
-		// var startDrag=0;
-		this.dragValidator=false;
+		this.dragValidator=null;
+		this.dragMobileValidator=null;
 		this.getSlides().forEach((slide)=>{
 			slide.addEventListener('mousedown',(e)=>{
 				pos.init=e.clientX
-				// starDrag=new Date().getSeconds();
 				this.dragValidator=new Date().getTime();
 			})
 			slide.addEventListener('mouseup',(e)=>{
-
 				if (new Date().getTime() > this.dragValidator+200) {
 					pos.end=e.clientX
 					if (pos.init<pos.end) {
@@ -241,7 +240,24 @@ class Ratslider extends RatsliderCore{
 					}
 				}
 			})
-
+			slide.addEventListener('touchstart',(e)=>{
+				pos.init=e.touches[0].clientX
+				this.dragValidator=new Date().getTime();
+			})
+			slide.addEventListener('touchmove',(e)=>{
+				this.dragMobileValidator=true
+				pos.end=e.touches[0].clientX
+			})
+			slide.addEventListener('touchend',(e)=>{
+				if (new Date().getTime() > this.dragValidator+200 && this.dragMobileValidator) {
+					if (pos.init<pos.end) {
+						this.prev()
+					}else{
+						this.next()
+					}
+				}
+				this.dragValidator=false
+			})
 		})
 	}
 	next(callback){
