@@ -13,9 +13,11 @@ class RatsliderCore{
 		this.setCurrentSlide(0);
 
 	}
-	setCurrentSlide(index){
+	setCurrentSlide(index,goto=false){
 		var max=this.getSliderLength();
-		index=index==0?0:index==max?max-1:index-1;
+		if (!goto) {
+			index=index==0?0:index==max?max-1:index-1;
+		}
 		if(typeof this.set == 'function'){
 			this.set(this.getSlides()[index],index)
 		}else{
@@ -111,15 +113,13 @@ class RatsliderCore{
 		var currentElement=this.getCurrentSlide()
 		var currentIndex=this.getCurrentSlideIndex()
 
-		typeof callback.before == 'function' ? callback.before(currentElement,currentIndex,slides):null;
-
-		if (to >= 0 && to < slidesLength && to!= data.index-1 ) {
+		if (to >= 0 && to < slidesLength && to!= currentIndex-1 ) {
 			this.resetCurrentSlide()
-			this.setCurrentSlide(to)
-			callback.after? callback.after(
-				to==0?slides[slidesLength.length-1]:currentElement,
+			this.setCurrentSlide(to,true)
+			typeof callback=='function'? callback(
+				slides[currentIndex-1],
 				slides[to],
-				top==slidesLength-1?slides[0]:slides[to].nextElementSibling
+				slides[to>slidesLength?to:0]
 			):null;
 			typeof this.onChange=='function'?this.onChange(slides,currentIndex):null;
 		}
@@ -247,17 +247,17 @@ class Ratslider extends RatsliderCore{
 			dotContainer.appendChild(dot)
 
 			dot.addEventListener('click',(e)=>{
-				super.goTo(e.target.getAttribute('slide'),
-					()=>{console.log('')},
+				var index=e.target.getAttribute('slide')
+				super.goTo(index,
 					(prev,current,next)=>{
-						var cleanPrev=new RegExp(`ratslider-prev`,'g')
-						var cleanNext=new RegExp(`ratslider-next`,'g')
-						document.querySelectorAll(`${this.props.id} ${this.props.slides}`).forEach((item)=>{
-							item.className=item.className.replace(cleanPrev,'')
-							item.className=item.className.replace(cleanNext,'')
-						})
-						prev.className+=` ratslider-prev`
-						next.className+=` ratslider-next`
+						this.cleanAttributes();
+						if (index+1>this.getNodeIndex(current)) {
+							this.setAttribute(current,`${this.currentSlideAttr}-${this.nextSlideAttr}`)
+							this.setAttribute(prev,this.nextSlideAttr)
+						}else{
+							this.setAttribute(current,`${this.currentSlideAttr}-${this.prevSlideAttr}`)
+							this.setAttribute(prev,this.prevSlideAttr)
+						}
 
 					}
 				)
@@ -273,7 +273,6 @@ const s=new Ratslider({
 		handlers:true
 	},
 	(a)=>{
-		console.log(a);
 	}
 
 );
