@@ -51,6 +51,11 @@ Ratslider is a stand alone responsive slider maker library wrote in vainilla jav
 
 you can also trigger manually navigation function, or write custom events for de navigation.
 
+### `create()`
+- the contrstuctor use `create()` by default.
+
+### `destroy()`
+
 ### `nex( callback(prev,current,next) )`
 
 - `callback` its optional. the callback args are the named dom element

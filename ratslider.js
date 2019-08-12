@@ -184,33 +184,53 @@ class Ratslider extends RatsliderCore{
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
 
-		// tagg all the slider
+		this.create();
+	}
+	create(){
+		var handlers=document.querySelectorAll(this.props.id+' span.handler')
+		var dots=document.querySelector('[ratslider=container] div.dotHandler')
 		this.setAttribute(this.containerElement,this.containerAttr)
-		super.getSlides().forEach((slide)=>{
-			if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
-				this.setAttribute(slide,this.defaultAttr)
+			super.getSlides().forEach((slide)=>{
+				if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
+					this.setAttribute(slide,this.defaultAttr)
+				}
+				slide.addEventListener("animationend",(a)=>{
+					a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
+				}, false);
+			})
+			if (!document.querySelector(`${this.props.id} [ratslider=${this.currentSlideAttr}]`)) {
+				this.setAttribute(this.getSlides()[0],this.currentSlideAttr)
 			}
-			slide.addEventListener("animationend",(a)=>{
-				a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
-			}, false);
+
+			if (this.props.dots && !dots) {
+				this.dots()
+				document.querySelector(`${this.props.id}[ratslider=container] .dotHandler span`).className='ratslider-dot-active'
+			}
+			if (this.props.handlers && handlers.length == 0) {
+				this.handlers()
+			}
+			if (this.props.draggable) {
+				if (typeof draggable == 'object') {
+					var op=this.props.draggable
+					drag(op.timeDragging,op.mobileDistance,op.desktopDistance)
+				}else{
+					this.drag()
+				}
+			}
+		}
+		destroy(){
+		var handlers=document.querySelectorAll(this.props.id+' span.handler')
+		var container=document.querySelector(this.props.id)
+		var dots=document.querySelector('[ratslider=container] div.dotHandler')
+		var slides=super.getSlides();
+		container.removeChild(handlers[0])
+		container.removeChild(handlers[1])
+		container.removeChild(dots)
+
+		container.removeAttribute('ratslider')
+		slides.forEach((slide)=>{
+			slide.removeAttribute('ratslider')
 		})
-
-
-		if (props.dots) {
-			this.dots()
-			document.querySelector(`${props.id}[ratslider=container] .dotHandler span`).className='ratslider-dot-active'
-		}
-		if (props.handlers) {
-			this.handlers()
-		}
-		if (props.draggable) {
-			if (typeof draggable == 'object') {
-				var op=prps.draggable
-				drag(op.timeDragging,op.mobileDistance,op.desktopDistance)
-			}else{
-				this.drag()
-			}
-		}
 	}
 	setAttribute(selector,value){
 		if (typeof selector=='object') {
