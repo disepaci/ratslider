@@ -22,6 +22,7 @@
 	font-size: 2em;
 	line-height: 100%;
 }
+
 [ratslider=container] .handler{
 	cursor: pointer;
 	-webkit-touch-callout: none;
@@ -30,7 +31,15 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
   	user-select: none;
-
+	padding: 0.2em 0.5em;
+	background: white;
+	border-radius: 25px;
+	color:gray;
+	opacity: 0.4;
+}
+[ratslider=container] .handler:active{
+	background: gray;
+	color:white;
 }
 [ratslider=container] .dotHandler{
 	position: absolute;
