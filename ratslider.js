@@ -183,8 +183,9 @@ class Ratslider extends RatsliderCore{
 		this.containerAttr='container'
 		this.nextSlideAttr='reverse-slide'
 		this.prevSlideAttr='foward-slide'
-
-		this.create();
+		if (props.create) {
+			this.create();
+		}
 	}
 	create(){
 		var handlers=document.querySelectorAll(this.props.id+' span.handler')
@@ -223,9 +224,22 @@ class Ratslider extends RatsliderCore{
 		var container=document.querySelector(this.props.id)
 		var dots=document.querySelector('[ratslider=container] div.dotHandler')
 		var slides=super.getSlides();
-		container.removeChild(handlers[0])
-		container.removeChild(handlers[1])
-		container.removeChild(dots)
+		if (this.props.handlers) {
+			container.removeChild(handlers[0])
+			container.removeChild(handlers[1])
+		}
+		if (this.props.dots) {
+			container.removeChild(dots)
+		}
+		if (this.props.draggable) {
+			slides.forEach((slide)=>{
+			slide.removeEventListener('mousedown',this.handleMouseDown)
+			slide.removeEventListener('mouseup',this.handleMouseUp)
+			slide.addEventListener('touchstart',this.handleTouchStart)
+			slide.removeEventListener('touchmove',this.handleTouchMove)
+			slide.removeEventListener('touchend',this.handleTouchEnd)
+			})
+		}
 
 		container.removeAttribute('ratslider')
 		slides.forEach((slide)=>{
@@ -251,38 +265,43 @@ class Ratslider extends RatsliderCore{
 			}
 		})
 	}
-	drag(timeDragging=200,mobileDistance=200,desktopDistance=100){
+	drag(createDestroy,timeDragging=200,mobileDistance=200,desktopDistance=100){
 		var pos={}
-
-		this.getSlides().forEach((slide)=>{
-			slide.addEventListener('mousedown',(e)=>{
-				pos.init=e.clientX
-			})
-			slide.addEventListener('mouseup',(e)=>{
-					pos.end=e.clientX
-					if (pos.init<pos.end-desktopDistance) {
-						this.prev()
-					}else if(pos.init>pos.end+desktopDistance){
-						this.next()
-					}
-			})
-
-			slide.addEventListener('touchstart',(e)=>{
-				pos.init=e.touches[0].clientX
-			})
-			slide.addEventListener('touchmove',(e)=>{
+		this.handleMouseDown=(e)=>{
+			pos.init=e.clientX
+		}
+		this.handleMouseUp=(e)=>{
+			pos.end=e.clientX
+			if (pos.init<pos.end-desktopDistance) {
+				this.prev()
+			}else if(pos.init>pos.end+desktopDistance){
+				this.next()
+			}
+		}
+		this.handleTouchStart=(e)=>{
+			pos.init=e.touches[0].clientX
+		}
+		this.handleTouchMove=(e)=>{
 				pos.end=e.touches[0].clientX
-			})
-			slide.addEventListener('touchend',(e)=>{
-					if (pos.init<pos.end-mobileDistance) {
-						this.prev()
-					}else if(pos.init>pos.end+mobileDistance){
-						this.next()
-					}
-				pos.init=0;
-				pos.end=0;
-				this.dragValidator=false
-			})
+		}
+		this.handleTouchEnd=(e)=>{
+				if (pos.init<pos.end-mobileDistance) {
+					this.prev()
+				}else if(pos.init>pos.end+mobileDistance){
+					this.next()
+				}
+			pos.init=0;
+			pos.end=0;
+			this.dragValidator=false
+
+		}
+		this.getSlides().forEach((slide)=>{
+			slide.addEventListener('mousedown',this.handleMouseDown)
+			slide.addEventListener('mouseup',this.handleMouseUp)
+
+			slide.addEventListener('touchstart',this.handleTouchStart)
+			slide.addEventListener('touchmove',this.handleTouchMove)
+			slide.addEventListener('touchend',this.handleTouchEnd)
 		})
 	}
 	next(callback){

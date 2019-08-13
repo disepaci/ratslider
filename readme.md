@@ -36,7 +36,8 @@ Ratslider is a stand alone responsive slider maker library wrote in vainilla jav
 					slides:'.slide', //my slide classes inside my slider css selector
 					dots:true, //enable dots handlers
 					handlers:true, //enable arrow handlers
-					draggable:true //enable dragg navigatioin (suport touch events)
+					draggable:true, //enable dragg navigatioin (suport touch events)
+					create:true // use this option to create on class initialization
 				},
 				(element)=>{ //callback executed when current slider its in place.
 					console.log('do something');
@@ -49,10 +50,10 @@ Ratslider is a stand alone responsive slider maker library wrote in vainilla jav
 
 ## functions
 
-you can also trigger manually navigation function, or write custom events for de navigation.
+you can also trigger manually navigation function, or write custom events for the navigation.
 
 ### `create()`
-- the contrstuctor use `create()` by default.
+- use it if you dont set the create option on class initialization
 
 ### `destroy()`
 
