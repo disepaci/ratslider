@@ -14,8 +14,10 @@ class RatsliderCore{
 
 		this.slidesLength=document.querySelectorAll(props.slides).length;
 		this.sliderId=`${props.id}`;
-		this.setCurrentSlide(0);
 
+		if (props.init) {
+			this.setCurrentSlide(0);
+		}
 	}
 	setCurrentSlide(index,goto=false){
 		var max=this.getSliderLength();
@@ -190,40 +192,47 @@ class Ratslider extends RatsliderCore{
 	create(){
 		var handlers=document.querySelectorAll(this.props.id+' span.handler')
 		var dots=document.querySelector('[ratslider=container] div.dotHandler')
-		this.setAttribute(this.containerElement,this.containerAttr)
-			super.getSlides().forEach((slide)=>{
-				if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
-					this.setAttribute(slide,this.defaultAttr)
-				}
-				slide.addEventListener("animationend",(a)=>{
-					a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
-				}, false);
-			})
-			if (!document.querySelector(`${this.props.id} [ratslider=${this.currentSlideAttr}]`)) {
-				this.setAttribute(this.getSlides()[0],this.currentSlideAttr)
-			}
 
-			if (this.props.dots && !dots) {
-				this.dots()
-				document.querySelector(`${this.props.id}[ratslider=container] .dotHandler span`).className='ratslider-dot-active'
+		super.setCurrentSlide(0);
+		this.setAttribute(this.containerElement,this.containerAttr)
+
+		super.getSlides().forEach((slide)=>{
+			if (slide.getAttribute(this.prefix) != this.currentSlideAttr) {
+				this.setAttribute(slide,this.defaultAttr)
 			}
-			if (this.props.handlers && handlers.length == 0) {
-				this.handlers()
-			}
-			if (this.props.draggable) {
-				if (typeof draggable == 'object') {
-					var op=this.props.draggable
-					drag(op.timeDragging,op.mobileDistance,op.desktopDistance)
-				}else{
-					this.drag()
-				}
+			slide.addEventListener("animationend",(a)=>{
+				a.animationName=='in-reverse'||a.animationName=='in-foward'? typeof animationEnd=='function'?animationEnd(a):null:null;
+			}, false);
+		})
+
+		if (!document.querySelector(`${this.props.id} [ratslider=${this.currentSlideAttr}]`)) {
+			this.setAttribute(this.getSlides()[0],this.currentSlideAttr)
+		}
+
+		if (this.props.dots && !dots) {
+			this.dots()
+			document.querySelector(`${this.props.id}[ratslider=container] .dotHandler span`).className='ratslider-dot-active'
+		}
+
+		if (this.props.handlers && handlers.length == 0) {
+			this.handlers()
+		}
+
+		if (this.props.draggable) {
+			if (typeof draggable == 'object') {
+				var op=this.props.draggable
+				drag(op.timeDragging,op.mobileDistance,op.desktopDistance)
+			}else{
+				this.drag()
 			}
 		}
-		destroy(){
+	}
+	destroy(){
 		var handlers=document.querySelectorAll(this.props.id+' span.handler')
 		var container=document.querySelector(this.props.id)
 		var dots=document.querySelector('[ratslider=container] div.dotHandler')
 		var slides=super.getSlides();
+
 		if (this.props.handlers) {
 			container.removeChild(handlers[0])
 			container.removeChild(handlers[1])
