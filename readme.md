@@ -77,7 +77,7 @@ you can also trigger manually navigation function, or write custom events for th
 
 ## constructor
 
-`Ratslider( { id: string, slides : string }, onChange, setCurrentSlide, resetCurrentSlide, getCurrentSlide)`
+`Ratslider( { id: string, slides : string, init: bool }, onChange, setCurrentSlide, resetCurrentSlide, getCurrentSlide)`
 
 - `onChange` function - event triggered when some navigation event occurs - **optional**
 
@@ -86,6 +86,11 @@ you can also trigger manually navigation function, or write custom events for th
 - `resetCurrentSlide` function - **required if *setCurrentSlide* is declared**
 
 - `getCurrentSlide` function - **required if *setCurrentSlide* is declared**
+
+### options
+- `id` = css selector of id slider container
+- `slides` = css selector of all slides inside the container
+- `init` = set the current slide on class initialization
 
 ## functions
 
