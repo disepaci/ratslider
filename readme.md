@@ -77,7 +77,7 @@ you can also trigger manually navigation function, or write custom events for th
 
 ## constructor
 
-`Ratslider( { id: string, slides : string, init: bool }, onChange, setCurrentSlide, resetCurrentSlide, getCurrentSlide)`
+`RatsliderCore( { id: string, slides : string, init: bool }, onChange, setCurrentSlide, resetCurrentSlide, getCurrentSlide)`
 
 - `onChange` function - event triggered when some navigation event occurs - **optional**
 
